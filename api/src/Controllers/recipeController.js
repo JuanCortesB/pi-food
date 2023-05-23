@@ -27,7 +27,7 @@ const getAllApiFood = async () => {
         return apiUrlInfo;
     } catch (error) {
         console.error(error);
-        throw new Error('Error retrieving data from API.');
+        res.status(500).json({ message: 'Error al traer data' });
     }
 };
 
@@ -62,14 +62,63 @@ const allApiAndDb = async (req, res) => {
         const allApiFood = await getAllApiFood();
         const allApiDb = await getAllApiDb();
         const apiAndDb = [...allApiFood, ...allApiDb];
-        res.json(apiAndDb);
+        return apiAndDb;
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Error al traer data' });
+        throw error;
+    }
+}
+
+///name
+
+const getAllByName = async (req, res) => {
+    try {
+        const {name} = req.query;
+        let apiAndDbdata = await allApiAndDb();
+        
+        if (name) {
+            let recipeName = apiAndDbdata.filter(data => data.name.toLowerCase().includes(name.toLowerCase()));
+            if (recipeName.length > 0) {
+                res.status(200).json(recipeName);
+            } else {
+                res.status(404).json({ message: 'no existe name'});
+            }
+        } else {
+            res.status(200).json(apiAndDbdata);
+        }
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error al traer data por nombre' });
+
+    }
+}
+/// GET BY ID
+
+const getAllByID = async (req, res) => {
+    try{
+        const {id} = req.params;
+        let apiAndDbdata = await allApiAndDb();
+
+        if (id) {
+            let recipeId = apiAndDbdata.find(data => data.id == id);
+            if (recipeId) {
+                res.status(200).json(recipeId);
+            } else {
+                res.status(404).json({ message: 'no existe id'});
+            }
+        } else {
+            res.status(200).json(apiAndDbdata);
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error al traer data por id' });
     }
 }
 
 
 module.exports = {
-    allApiAndDb,
+    allApiAndDb, 
+    getAllByName,
+    getAllByID,
 }

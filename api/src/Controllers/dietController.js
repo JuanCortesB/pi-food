@@ -1,0 +1,1 @@
+const {Diets} = require('../db.js');
