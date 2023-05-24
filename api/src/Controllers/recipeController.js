@@ -99,8 +99,8 @@ const getAllByID = async (req, res) => {
     try{
         const {id} = req.params;
         let apiAndDbdata = await allApiAndDb();
-
-        if (id) {
+        
+        if (id) {   
             let recipeId = apiAndDbdata.find(data => data.id == id);
             if (recipeId) {
                 res.status(200).json(recipeId);
