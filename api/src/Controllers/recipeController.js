@@ -1,6 +1,5 @@
 const { Recipe, Diets } = require('../db.js');
 const axios = require('axios');
-const { Op } = require('sequelize');
 const { APIKEY } = process.env;
 require('dotenv').config();
 
@@ -115,10 +114,28 @@ const getAllByID = async (req, res) => {
         res.status(500).json({ message: 'Error al traer data por id' });
     }
 }
+/// CREAR RECETA
 
+const postRecipe = async (req, res) => {
+    try {
+        const { name , diets} = req.body;
+        const createRecipe = await Recipe.create({
+            name
+        })
+        const dataDietsDb = await Diets.findAll({
+            where: { name: diets }
+        })
+        createRecipe.addDiets(dataDietsDb);
+        res.status(200).send('receta creada')  
+} catch (error) {
+    console.error(error);
+        res.status(500).json({ message: 'Error al crear receta' });
+}
+}
 
 module.exports = {
     allApiAndDb, 
     getAllByName,
     getAllByID,
+    postRecipe,
 }
